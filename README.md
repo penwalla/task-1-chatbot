@@ -1,6 +1,6 @@
 # 🧠 Aether — Context-Aware Multi-Turn AI Chatbot
 
-A production-grade, multi-turn AI chatbot powered by the **Google Gemini API** (`gemini-flash-latest` / `gemini-3.8-flash` / `gemini-3.1-flash-lite`) featuring **active context window management**, personality-driven system prompting, resilient error handling, and dual interfaces (interactive Web UI & Terminal CLI).
+A production-grade, multi-turn AI chatbot powered by the **Google Gemini API through LangChain** (`gemini-flash-latest` / `gemini-3.8-flash` / `gemini-3.1-flash-lite`) featuring **active context window management**, personality-driven system prompting, resilient error handling, and dual interfaces (interactive Web UI & Terminal CLI).
 
 ---
 
@@ -9,6 +9,7 @@ A production-grade, multi-turn AI chatbot powered by the **Google Gemini API** (
 | Requirement | Implementation Details |
 |---|---|
 | ✅ **Backend Endpoint** | FastAPI REST endpoints (`POST /api/chat`, `GET /api/conversations/{id}`, `DELETE /api/conversations/{id}`, `GET /api/health`). |
+| ✅ **LangChain Integration** | Uses `ChatGoogleGenerativeAI` and LangChain message/history abstractions while preserving the application’s conversation and telemetry APIs. |
 | ✅ **Multi-Turn Memory** | Per-conversation session isolation storing full turn histories; capable of cross-referencing facts established turns earlier. |
 | ✅ **Context Window Management** | **Dual strategies supported:**<br>1. *Sliding Window Truncation* (preserves last $N$ turns cleanly starting with user turn).<br>2. *Progressive Summarization* (compresses older turns into a running memory summary prepended to active context). |
 | ✅ **System Prompt & Persona** | **Aether**: An articulate, pragmatic Technical Mentor & Software Architect with clear guidelines for depth, memory continuity, and clarity. |
@@ -179,7 +180,7 @@ python test_conversation.py
 ```
 ├── .gitignore               # Strict ignore rules (.env, .venv, logs, etc.)
 ├── .env.example             # Safe environment variable template
-├── requirements.txt         # Dependencies (FastAPI, google-genai, uvicorn, etc.)
+├── requirements.txt         # Dependencies (FastAPI, LangChain, Gemini provider, uvicorn, etc.)
 ├── cli.py                   # Terminal CLI interface
 ├── test_conversation.py     # Automated multi-turn test suite
 ├── README.md                # Comprehensive project documentation
@@ -187,7 +188,7 @@ python test_conversation.py
 │   ├── __init__.py
 │   ├── config.py            # Environment configuration & validation
 │   ├── context_manager.py   # Sliding window & progressive summarization algorithms
-│   ├── llm_client.py        # Gemini client wrapper with resilient error handling
+│   ├── llm_client.py        # LangChain Gemini client with resilient error handling
 │   ├── persona.py           # Aether system persona & prompts
 │   └── main.py              # FastAPI application & REST endpoints
 └── static/
