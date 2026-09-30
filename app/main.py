@@ -17,6 +17,8 @@ from app.config import settings
 from app.persona import DEFAULT_BOT_NAME, SYSTEM_PROMPT
 from app.context_manager import context_manager
 from app.llm_client import llm_client, LLMClientError
+import uvicorn
+import os
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -72,6 +74,25 @@ async def llm_client_error_handler(request: Request, exc: LLMClientError):
             "details": exc.details,
             "status_code": exc.status_code
         }
+    )
+
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    """Catch-all exception handler returning JSON to avoid HTML error pages.
+
+    Some clients (like the web UI) expect JSON and fail when the server
+    responds with an HTML error page. This handler ensures JSON is always
+    returned for unexpected errors.
+    """
+    logger.exception("Unhandled exception: %s", exc)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": True,
+            "message": "Internal server error",
+            "details": str(exc),
+        },
     )
 
 
@@ -200,3 +221,23 @@ async def create_new_conversation():
         "conversation_id": new_id,
         "stats": conversation.get_stats()
     }
+
+
+if __name__ == "__main__":
+    # Start Uvicorn when executed as a module: `python -m app.main`
+    # Accept optional CLI overrides for host/port, otherwise use settings
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Run the Context-Managed Chatbot API")
+    parser.add_argument("--host", type=str, help="Host to bind to", default=os.getenv("HOST") or settings.HOST)
+    parser.add_argument("--port", type=int, help="Port to bind to", default=int(os.getenv("PORT") or settings.PORT))
+    args = parser.parse_args()
+
+    bind_host = args.host
+    bind_port = args.port
+
+    try:
+        uvicorn.run("app.main:app", host=bind_host, port=bind_port, log_level="info")
+    except OSError as e:
+        logger.error("Failed to bind to %s:%s — %s", bind_host, bind_port, e)
+        raise

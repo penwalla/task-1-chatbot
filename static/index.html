@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aether | Context-Aware AI Chatbot</title>
+  <title>Aether | AI Chatbot</title>
+  <meta name="description" content="Aether — a context-aware multi-turn AI chatbot powered by the Gemini API.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <!-- Markdown & Syntax Highlighting -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <div class="app-layout">
+
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
@@ -25,110 +26,85 @@
             <span class="badge-role">Technical Mentor</span>
           </div>
         </div>
-        <button id="newChatBtn" class="btn-primary-sm" title="Start a fresh conversation">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          New Chat
+        <button id="newChatBtn" class="btn-primary-sm" title="New chat">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New
         </button>
       </div>
 
-      <!-- Context Window Monitor Card -->
+      <!-- Context Window -->
       <div class="sidebar-section">
-        <h3 class="section-title">
-          <span>🧠 Context Window Manager</span>
-        </h3>
-        <div class="card context-card">
+        <h3 class="section-title">Context Window</h3>
+        <div class="card">
           <div class="stat-row">
-            <span class="stat-label">Active Strategy:</span>
+            <span class="stat-label">Strategy</span>
             <span class="stat-value badge" id="strategyBadge">Sliding Window</span>
           </div>
           <div class="stat-row">
-            <span class="stat-label">Window Capacity:</span>
+            <span class="stat-label">Capacity</span>
             <span class="stat-value" id="capacityVal">10 msgs</span>
           </div>
           <div class="stat-row">
-            <span class="stat-label">Messages in Context:</span>
+            <span class="stat-label">In window</span>
             <span class="stat-value font-mono" id="contextCount">0 / 0</span>
           </div>
           <div class="stat-row">
-            <span class="stat-label">Pruned / Summarized:</span>
+            <span class="stat-label">Pruned</span>
             <span class="stat-value font-mono text-muted" id="prunedCount">0</span>
           </div>
-          
-          <!-- Context Progress Bar -->
+
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="contextProgressBar" style="width: 0%"></div>
+            <div class="progress-bar-fill" id="contextProgressBar" style="width:0%"></div>
           </div>
 
-          <!-- Strategy Switcher -->
           <div class="control-group">
-            <label for="strategySelect">Switch Strategy:</label>
+            <label for="strategySelect">Switch strategy</label>
             <select id="strategySelect" class="form-select">
               <option value="sliding_window">Sliding Window (Last N)</option>
               <option value="summarization">Progressive Summarization</option>
             </select>
           </div>
 
-          <!-- Max Messages Input -->
           <div class="control-group">
-            <label for="maxMessagesInput">Max Context Messages:</label>
+            <label for="maxMessagesInput">Max context messages</label>
             <input type="number" id="maxMessagesInput" class="form-input" min="4" max="30" value="10">
           </div>
         </div>
       </div>
 
-      <!-- Running Memory Card (Visible when summarization is active) -->
-      <div class="sidebar-section" id="memorySection" style="display: none;">
-        <h3 class="section-title">
-          <span>📝 Running Conversation Memory</span>
-        </h3>
+      <!-- Running Memory (summarization mode) -->
+      <div class="sidebar-section" id="memorySection" style="display:none;">
+        <h3 class="section-title">Running Memory</h3>
         <div class="card memory-card">
-          <p id="memorySummaryText" class="text-sm">No older messages summarized yet.</p>
+          <p id="memorySummaryText" class="text-sm text-muted">No summary yet.</p>
         </div>
       </div>
 
-      <!-- System Persona Info -->
-      <div class="sidebar-section">
-        <h3 class="section-title">
-          <span>🎭 System Persona</span>
-        </h3>
-        <div class="card persona-card">
-          <p class="persona-name"><strong>Aether</strong> &bull; Senior Architect</p>
-          <p class="persona-desc">Pragmatic mentor with multi-turn recall, architectural depth, and crisp code analogies.</p>
-        </div>
-      </div>
-
-      <!-- Footer Info -->
+      <!-- Footer -->
       <div class="sidebar-footer">
         <div class="api-status" id="apiStatusIndicator">
           <span class="status-dot checking"></span>
-          <span class="status-text" id="apiStatusText">Checking API...</span>
+          <span class="status-text" id="apiStatusText">Checking API…</span>
         </div>
-        <button id="clearChatBtn" class="btn-ghost-sm" title="Clear current history">
-          Clear History
-        </button>
+        <button id="clearChatBtn" class="btn-ghost-sm">Clear history</button>
       </div>
     </aside>
 
-    <!-- Main Chat Area -->
+    <!-- Main Chat -->
     <main class="chat-main">
-      <!-- Chat Header -->
       <header class="chat-header">
         <div class="chat-header-info">
-          <button id="sidebarToggle" class="btn-icon" title="Toggle Sidebar">☰</button>
+          <button id="sidebarToggle" class="btn-icon" title="Toggle sidebar">☰</button>
           <div>
-            <h1 class="chat-title">Aether Technical Assistant</h1>
-            <p class="chat-subtitle" id="sessionSubtitle">Session: Initializing...</p>
+            <h1 class="chat-title">Aether</h1>
+            <p class="chat-subtitle" id="sessionSubtitle">Session: Initializing…</p>
           </div>
         </div>
-        <div class="header-actions">
-          <button id="refreshKeyBtn" class="btn-secondary-sm" title="Reload configuration from .env">
-            🔄 Reload .env
-          </button>
-        </div>
+        <button id="refreshKeyBtn" class="btn-secondary-sm" title="Reload .env config">🔄 Reload .env</button>
       </header>
 
-      <!-- Alert Banner (shown when API key is missing or error happens) -->
-      <div id="alertBanner" class="alert-banner" style="display: none;">
+      <!-- Alert Banner -->
+      <div id="alertBanner" class="alert-banner" style="display:none;">
         <div class="alert-content">
           <span class="alert-icon">⚠️</span>
           <span id="alertMessage" class="alert-text">API key is missing.</span>
@@ -136,26 +112,25 @@
         <button id="closeAlertBtn" class="alert-close">&times;</button>
       </div>
 
-      <!-- Messages Container -->
+      <!-- Messages -->
       <div class="chat-messages" id="chatMessages">
-        <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcomeScreen">
           <div class="welcome-avatar">✨</div>
-          <h2>Hello, I'm Aether.</h2>
-          <p>I am your technical mentor and engineering companion. I retain conversational context across turns using active context window management.</p>
-          
+          <h2>Hi, I'm Aether.</h2>
+          <p>Your context-aware technical mentor. I remember what you tell me across the whole conversation.</p>
+
           <div class="test-guide-card">
-            <h4>💡 Recommended Multi-Turn Memory Test:</h4>
-            <p class="guide-subtext">Click these steps sequentially to test context retention:</p>
+            <h4>💡 Try these prompts in order:</h4>
+            <p class="guide-subtext">Click any step to send it instantly.</p>
             <div class="suggestion-chips">
-              <button class="chip" data-prompt="Hi Aether! My name is Alex and I'm developing an autonomous inspection drone in Python.">
-                <strong>Turn 1:</strong> Introduce yourself & project
+              <button class="chip" data-prompt="Hi Aether! My name is Alex and I'm building an autonomous inspection drone in Python.">
+                <strong>Turn 1:</strong> Introduce yourself &amp; project
               </button>
               <button class="chip" data-prompt="What was my name and what project am I working on?">
                 <strong>Turn 2:</strong> Test memory recall
               </button>
               <button class="chip" data-prompt="Recommend 3 critical sensor types for this drone.">
-                <strong>Turn 3:</strong> Project recommendation
+                <strong>Turn 3:</strong> Domain recommendation
               </button>
               <button class="chip" data-prompt="Which programming language did I mention earlier, and why is it suitable for these sensors?">
                 <strong>Turn 4:</strong> Cross-reference past facts
@@ -168,26 +143,23 @@
         </div>
       </div>
 
-      <!-- Chat Input Area -->
+      <!-- Input -->
       <div class="chat-input-container">
         <form id="chatForm" class="chat-form">
           <textarea
             id="userInput"
             class="chat-input"
             rows="1"
-            placeholder="Type your message... (Enter to send, Shift+Enter for newline)"
+            placeholder="Message Aether… (Enter to send, Shift+Enter for newline)"
             required
           ></textarea>
-          <button type="submit" id="sendBtn" class="btn-send" title="Send message">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          <button type="submit" id="sendBtn" class="btn-send" title="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
             </svg>
           </button>
         </form>
-        <div class="input-hint">
-          <span>Aether remembers context across turns with active window management &bull; Built with Google Gemini API</span>
-        </div>
+        <div class="input-hint">Gemini API · Context-aware multi-turn memory</div>
       </div>
     </main>
   </div>

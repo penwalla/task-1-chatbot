@@ -1,6 +1,6 @@
 # 🧠 Aether — Context-Aware Multi-Turn AI Chatbot
 
-A production-grade, multi-turn AI chatbot powered by the **Google Gemini API** (`gemini-1.5-flash` / `gemini-2.0-flash`) featuring **active context window management**, personality-driven system prompting, resilient error handling, and dual interfaces (interactive Web UI & Terminal CLI).
+A production-grade, multi-turn AI chatbot powered by the **Google Gemini API** (`gemini-flash-latest` / `gemini-3.8-flash` / `gemini-3.1-flash-lite`) featuring **active context window management**, personality-driven system prompting, resilient error handling, and dual interfaces (interactive Web UI & Terminal CLI).
 
 ---
 
@@ -107,7 +107,7 @@ Open `.env` in any text editor and paste your Gemini API key:
 
 ```env
 GEMINI_API_KEY=AIzaSy...your_real_key_here
-GEMINI_MODEL=gemini-1.5-flash
+GEMINI_MODEL=gemini-flash-latest
 CONTEXT_STRATEGY=sliding_window
 MAX_CONTEXT_MESSAGES=10
 ```

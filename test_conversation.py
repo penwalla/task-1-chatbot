@@ -80,6 +80,7 @@ def test_summarization_thresholds():
     print("  --> PASS: Summarization triggering and state updates function properly.")
 
 
+
 def run_live_multi_turn_test():
     print("\n[Test 4] Live 5-Turn Gemini API Multi-Turn Test...")
     from app.llm_client import llm_client
@@ -101,11 +102,13 @@ def run_live_multi_turn_test():
         ("Turn 5 (Multi-Turn Synthesis)", "Please give a 2-bullet summary of our discussion so far.")
     ]
 
+    import time
     for turn_label, prompt in turns:
         print(f"\n  >> {turn_label}: '{prompt}'")
         reply, stats = llm_client.generate_response(conv, prompt)
         print(f"  << Aether: {reply[:150]}... [length: {len(reply)} chars]")
         print(f"     [Stats: {stats['messages_in_context']}/{stats['total_messages']} messages in context]")
+        time.sleep(1.5)
 
     # Check that Jordan was recalled
     all_bot_replies = " ".join([m.content for m in conv.messages if m.role == "model"])

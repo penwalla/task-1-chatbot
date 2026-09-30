@@ -12,7 +12,7 @@ class Settings:
     
     # Gemini API Credentials
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "").strip()
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash").strip()
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip()
     
     # Context Window Strategy: 'sliding_window' or 'summarization'
     CONTEXT_STRATEGY: str = os.getenv("CONTEXT_STRATEGY", "sliding_window").strip().lower()
@@ -29,7 +29,7 @@ class Settings:
         """Reload configuration from disk."""
         load_dotenv(dotenv_path=ENV_PATH, override=True)
         cls.GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-        cls.GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash").strip()
+        cls.GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip()
         cls.CONTEXT_STRATEGY = os.getenv("CONTEXT_STRATEGY", "sliding_window").strip().lower()
         cls.MAX_CONTEXT_MESSAGES = int(os.getenv("MAX_CONTEXT_MESSAGES", "10"))
         cls.HOST = os.getenv("HOST", "127.0.0.1")
